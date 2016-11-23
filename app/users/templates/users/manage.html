@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% block title %} {{'Manage User(s)'|site_title}} {% endblock %}
+
+{% block page_title %} Manage User {% endblock %}
+
+{% block extra_js %} 
+    <script src="{{url_for('static', filename='js/typeahead.bundle.min.js')}}"></script>
+    <script src="{{url_for('.static', filename='js/user.js')}}"></script>
+
+    <script>
+        $(document).ready(function(){ 
+             
+             var users_list = new Bloodhound({
+                  datumTokenizer: Bloodhound.tokenizers.whitespace,
+                  queryTokenizer: Bloodhound.tokenizers.whitespace,
+                  remote: {
+                      url: "/users/search?q=%QUERY",
+                      wildcard: "%QUERY",
+                      transform: function(response){
+                          return response.results;
+                      }
+                  }
+              });
+             
+              $('[name=search]').typeahead({
+                  highlight: true,
+                  minHeight: 1,
+                  hint: true
+              },
+              {
+                  name: 'users_list',
+                  source: users_list,
+                  displayKey: 'username',
+                  templates: {
+                      empty: [
+                            'No items found',
+                        ].join('\n'),
+                       suggestion: function(data){
+                           return '<p>'+data.username+' <span class="badge pull-right">'+data.email+'</span></p>'
+                       },
+                  }
+              }).on('typeahead:selected', function(e, data){
+                   
+                   $.each(data, function(i, row){ 
+                        
+                         if(data.active === true ){
+                             $('[name=active]').attr('checked', 'checked').prop('checked', true);
+                         }
+                         if(data.initial_name == 'Mr' ){
+                             $('#initial_name_mr').prop('checked', true);
+                         }
+                         if(data.initial_name == 'Mrs' ){
+                             $('#initial_name_mrs').prop('checked', true);
+                         }
+                         if(data.authenticated === true ){
+                             $('.status-online').text('Online');
+                         }
+                         $('[name='+i+']').not('input[type=checkbox]').attr('value', data[i]).val(data[i]);
+                    });
+                    $('.no_activity').hide();
+                    $('.activities').show();
+                    $('select').selectpicker('render');
+                    $('[type=submit]').prop('disabled', false);
+                    $('[name=delete_btn]').prop('disabled', false);
+              });
+            
+              
+              $('[name=email]').on('keyup', function(e){ 
+                    var email = $(this).val();
+                    user.validate_email(email, $(this) );
+              });
+            
+              $('body').on('click', '.yes_edit', function(e){
+                    $('[name=search]').focus().typeahead('val',$('[name=email]').val()).focus();
+                  
+              });
+              {% if username %}
+                    $('[name=search]').focus().typeahead('val','{{username}}');
+              {% endif %}
+            
+              user.submit_create_form();
+              user.deleteUser();
+              
+              $('[name=print_btn]').click(function(e){
+                  $('#print_content').printThis({
+                      pageTitle: 'Users',
+                      removeInline: true,
+                      header: 'Users',
+                      importCSS: true,
+                      loadCSS: '{{url_for(".static", filename="css/print.css")}}',
+                      formValues: true,
+                      printContainer: true,
+                      
+                  });
+                return false;
+            });
+            
+               $('#import_form_btn').click(function(e){
+                    $('iframe').contents().find('form').submit(); 
+               });
+               
+        });
+    </script>
+{% endblock %}
+
+            
+
+{% block breadcrumb %}
+    <li><a href="{{url_for('dashboard.controllers.index')}}">Home</a></li>
+    <li><a href="{{url_for('users.controllers.index')}}">Users</a></li>
+    <li class="active">Manage</li>
+{% endblock%}
+
+{% block top_content %}
+    <span class="create_user_top_content">
+    </span>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form class="col-sm-offset-2 col-xs-6 col-lg-6 col-sm-6" name="search_form">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search for user..." name="search">
+          <span class="input-group-btn">
+            <button class="btn btn-primary search_btn" type="button"><span class="glyphicon glyphicon-search"></span></button>
+          </span>
+        </div><!-- /input-group -->
+    </form>
+</div><!-- SEARCH FORM ROW -->
+<hr>
+<div class="row" id="print_content">
+    <div class="col-lg-8 col-xs-8 col-md-8 col-sm-8">
+        <form class="form-horizontal" method="post" name="create_user">
+                {{ form.csrf_token }}
+        
+            <div class="form-group">
+                <label class="col-lg-4 col-sm-2 control-label">First name</label>
+               
+                <div class="col-lg-8 col-sm-6">
+                     <div class="input-group">
+                        <span class="input-group-btn" id="basic-addon3">
+                             <select name="initial_name" class="form-control">
+                                  <option></option>
+                                  <option>MR</option>
+                                  <option>MRS</option>
+                              </select>
+                        </span>
+                        <input type="text" name="first_name" required class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-4 col-sm-2 control-label">Last name</label>
+                <div class="col-lg-8 col-sm-6">
+                    <input type="text" name="last_name" required class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-4 col-sm-2 control-label">Email Address</label>
+                <div class="col-lg-8 col-sm-6">
+                    <input type="email" name="email" required class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-lg-4 col-sm-2 control-label">Username</label>
+                <div class="col-lg-8 col-sm-6">
+                    <input type="text" name="username" required class="form-control" readonly>
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label class="col-lg-4 col-sm-2 control-label">Password</label>
+                <div class="col-lg-8 col-sm-6">
+                    <input type="text" name="password" required class="form-control" >
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label class="col-lg-4 col-sm-2 control-label">User Role</label>
+                <div class="col-lg-8 col-sm-6">
+                    
+                        <select name="role_id" class="form-control" data-live-search="true">
+                            <option></option>
+                            {% for role in roles %}
+                                <option value="{{role.id}}">{{role.name}}</option>
+                            {% endfor %}
+                        </select>
+                
+                </div>
+            </div>
+            
+            <div class="checkbox col-sm-offset-4">
+                  <label>
+                    <input type="checkbox" name="active" value="1"> Active
+                  </label>
+            </div>
+            <hr>
+            <div class="col-sm-offset-3">
+                            <button type="submit" class="btn btn-primary btn-sm" disabled>
+                                <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Submit</button>
+                &nbsp;
+                <button type="reset" class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;Reset</button>
+                &nbsp;
+                <button type="button" class="btn btn-danger btn-sm" disabled name="delete_btn">
+                                <span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Remove</button>
+                &nbsp;
+                <button type="button" class="btn btn-info btn-sm" name="print_btn">
+                                <span class="glyphicon glyphicon-print"></span></button>
+                &nbsp;
+                 <button type="button" class="btn btn-primary btn-sm" name="email_btn" data-toggle="modal" data-target="#email_user_modal">
+                                <span class="glyphicon glyphicon-envelope"></span></button>
+                &nbsp;
+                <button type="button" role="button" class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#import_user_modal">
+                                <span class="glyphicon glyphicon-import"></span>&nbsp;&nbsp;Import Excel</button>
+            </div>
+    </form>
+    </div>
+    <!-- USER INFORMATION -->
+    <div class="col-lg-4 col-xs-4 col-md-4 col-sm-4">
+            <h5>Activities</h5>
+            <small class="no_activity">No activities.</small>
+            <ul class="list-group activities" style="display:none;">
+                <li class="list-group-item">Status <span class="badge pull-right status-online">Offline</span></li>
+            </ul>
+    </div>
+</div>
+
+{% include 'users/_import.html' %}
+{% include 'users/_email.html' %}
+{% endblock %}

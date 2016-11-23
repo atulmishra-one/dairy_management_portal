@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+            <title>{{'Import users '|site_title}}</title>
+            {% assets "css_all" %}
+                <link rel="stylesheet" href="{{ ASSET_URL }}" />
+            {% endassets %}
+            
+            <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" />
+            <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>
+        
+            {% assets "js_all" %}
+                <script type="application/javascript" src="{{ ASSET_URL }}"></script>
+            {% endassets %}
+            <style>
+                span.glyphicon.glyphicon-question-sign:hover{
+                    cursor: help;
+                }
+            </style>
+            
+    </head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" class="form-control" name="file">
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                
+                <div class="task-status">
+                    <input type="hidden" name="task_id" value="{{task_id}}">
+                </div>
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    <ul class=list-unstyled>
+                    {% for message in messages %}
+                      <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>

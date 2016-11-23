@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %} {{'Users'|site_title}} {% endblock %}
+
+{% block page_title %} Users {% endblock %}
+
+{% block extra_js %}
+<script src="{{url_for('static', filename='js/typeahead.bundle.min.js')}}"></script>
+    <script>
+        $(document).ready(function(e){ 
+            $('table').stupidtable();
+            
+            var users_list = new Bloodhound({
+                  datumTokenizer: Bloodhound.tokenizers.whitespace,
+                  queryTokenizer: Bloodhound.tokenizers.whitespace,
+                  remote: {
+                      url: "/users/search?q=%QUERY",
+                      wildcard: "%QUERY",
+                      transform: function(response){
+                          return response.results;
+                      }
+                  }
+            });
+            
+             $('[name=search]').typeahead({
+                  highlight: true,
+                  minHeight: 1,
+                  hint: true
+              },
+              {
+                  name: 'users_list',
+                  source: users_list,
+                  displayKey: 'username',
+                  templates: {
+                      empty: [
+                            'No items found',
+                        ].join('\n'),
+                       suggestion: function(data){
+                           return '<p>'+data.username+' <span class="badge pull-right">'+data.email+'</span></p>'
+                       },
+                  }
+              }).on('typeahead:selected', function(e, data){
+                    //
+              });
+            
+            
+            $('#print_btn').click(function(e){
+                  $('#print_content').printThis({
+                      pageTitle: 'Users',
+                      removeInline: true,
+                      header: 'Users',
+                      importCSS: true,
+                      loadCSS: '{{url_for(".static", filename="css/print.css")}}'
+                      
+                  });
+                return false;
+            });
+            
+            $('#search_btn').click(function(e){
+                 window.location.href = "{{url_for('users.controllers.manage')}}/"+$('[name=search]').val();
+            });
+            
+        });
+    </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{url_for('dashboard.controllers.index')}}">Home</a></li>
+    <li class="active">Users</li>
+{% endblock%}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Users<span class="pull-right"></span>
+                    
+                </div>
+                    <div class="well">
+                        <!-- TOOLS DIV -->
+                        <div class="row">
+                            <div class="col-lg-3 col-xs-3 col-md-3 col-sm-3">
+                                 <button class="btn btn-sm btn-primary" id="print_btn"><span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;Print</button>
+                            &nbsp;&nbsp;
+                            <a class="btn btn-sm btn-primary" href="{{url_for('users.controllers.export')}}"><span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Export</a>
+                            </div>
+                            <div class="col-lg-6 col-xs-6 col-md-6 col-sm-6">
+                            
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="search" placeholder="Search users">
+                                    <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button" id="search_btn"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                </div>
+                                
+                            </div>
+                            <div class="col-lg-3 col-xs-3 col-md-3 col-sm-3">
+                                <div class="pull-right"><strong>Record count : &nbsp;&nbsp;</strong><span class="badge">{{users.total}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                  <div class="panel-body">
+                        <div class="table-responsive" id="print_content">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td colspan="6">
+                                            <strong>Showing &rarr; {{users.items|length}} out of {{users.total}}</strong>
+                                            <div class="pull-right">
+                                                <a href="{{url_for('users.controllers.index', page=users.prev_num)}}">&laquo; &nbsp;Prev&nbsp;</a>
+                                                <a href="{{url_for('users.controllers.index', page=users.next_num)}}">Next &nbsp; &raquo;</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th data-sort="string">Full name&nbsp;</th>
+                                        <th data-sort="string">Username</th>
+                                        <th data-sort="int">Status</th>
+                                        <th data-sort="string">Email</th>
+                                        <th data-sort="string">Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  {% for user in users.items %}
+                                    <tr>
+                                        <td>
+                                            <a class="btn btn-sm" href="{{url_for('users.controllers.manage', username=user.username)}}"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                        </td>
+                                        <td>{{user.initial_name|title}}&nbsp;{{user.first_name|title}}&nbsp;{{user.last_name|title}}</td>
+                                        <td>{{user.username}}</td>
+                                        <td><span class="glyphicon {% if user.active %} glyphicon-ok-circle text-success {% else %} glyphicon-ban-circle text-danger {% endif %}"></span></td>
+                                        <td class="user_email"><span class="glyphicon glyphicon-envelope"></span> &nbsp; {{user.email}}</td>
+                                        <td>{{user.name}}</td>
+                                    </tr>
+                                   {% else %}
+                                        <tr>
+                                            <td colspan="6" align="middle">
+                                                <p class="text text-danger"> No more results.</p>
+                                            </td>
+                                        </tr>
+                                   {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

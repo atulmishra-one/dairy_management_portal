@@ -1,0 +1,10 @@
+a[href]:after { content: none !important; }
+a span.glyphicon.glyphicon-info-sign{
+    display: none;
+}
+input{
+    border: none;
+}
+button{
+    display: none;
+}

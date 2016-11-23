@@ -1,0 +1,31 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="email_user_modal">
+<form method="post" action="{{url_for('users.controllers.send_email')}}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Email</h4>
+      </div>
+      <div class="modal-body">
+            
+                <div class="form-group">
+                    <label>To</label>
+                    <input type="email" name="to" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" name="subject" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea class="form-control" name="message"></textarea>
+                </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary btn-sm" id="email_form_btn"><span class="glyphicon glyphicon-msg"></span>&nbsp;&nbsp;Send Message</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</form>
+</div><!-- /.modal -->

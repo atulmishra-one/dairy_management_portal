@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+    <head>
+            <title>
+                {% block title %} {% endblock %}
+            </title>
+            {% assets "css_all" %}
+                <link rel="stylesheet" href="{{ ASSET_URL }}" />
+            {% endassets %}
+            
+            <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/css/bootstrap-select.min.css">
+        
+            <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>
+             <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'  type='text/css'>
+            <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'  type='text/css'>
+            <link rel="stylesheet" href="/static/css/typeahead.css" />
+            <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+            <link rel="stylesheet" href="/static/css/overlay.css" />
+        
+            <style>
+                body{
+                    font-family: 'Open Sans', 'Roboto', 'Ubuntu', serif;
+                    font-size: 12px !important;
+                }
+                h1{
+                    font-family: 'Ubuntu', serif;
+                }
+                .twitter-typeahead {
+                    display: block !important;
+                }
+                .typeahead-sug-header{
+                    padding: 0px 0px 0px 22px !important;
+                    margin-top: 0px;
+                    border-bottom: 1px solid #CCC;
+                }
+                .well{
+                    background-color: #FDFDFD;
+                    background-image: -webkit-linear-gradient(top,#F9F8FF 0,#F4F5FF 100%);
+                }
+                .navbar-inverse{
+                    background-image: -webkit-linear-gradient(to bottom,#4E84B3 0,#314E67 100%) !important;
+                    background-image: linear-gradient(to bottom,#4E84B3 0,#2E6DA4 100%) !important;
+                }
+                .navbar-inverse .navbar-nav>li>a {
+                    color: #EFE6E6 !important;
+                }
+                .navbar-inverse .navbar-brand {
+                    color: #fff !important;
+                }
+                .navbar-nav > li > a, .navbar-brand {
+                        padding-top:5px !important; padding-bottom:0 !important;
+                        height: 32px;
+                        font-size: 12px !important;
+                }
+                .navbar {min-height:32px !important;}
+                .navbar-brand {
+                    font-size: 14px !important;
+                }
+                
+            </style>
+        
+            {% assets "js_all" %}
+                <script type="application/javascript" src="{{ ASSET_URL }}"></script>
+            {% endassets %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/js/bootstrap-select.min.js"></script>
+            <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+            <script type="application/javascript" src="/static/js/stupidtable.min.js"></script>
+            <script type="application/javascript" src="/static/js/printThis.js"></script>
+            <script>
+                $(document).ready(function(){
+                    $('select').selectpicker();
+                });
+            </script>
+            {% block extra_js %}
+                
+            {% endblock %}
+           
+            
+    </head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">{{''|site_title|replace('-', '')}}</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{{url_for('.index')}}">Dashboard</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-cog"></span>&nbsp;Settings</a></li>
+            <li><a href="{{url_for('default.controllers.logout')}}"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout</a></li>
+            <li><a><span class="glyphicon glyphicon-user"></span>&nbsp;{{current_user.username}}</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav> <!-- END NAVIGATION -->
+    
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="{{url_for('.index')}}">Overview <span class="sr-only">(current)</span></a></li>
+          </ul>
+        
+          <h5>Demands Management</h5>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Manage Demands</a></li>
+            <li><a href="">Add New</a></li>
+          </ul>
+         <h5>User Management</h5>
+          <ul class="nav nav-sidebar">
+            <li><a href="{{url_for('users.controllers.index')}}">Users</a></li>
+            <li><a href="{{url_for('users.controllers.manage')}}">Manage</a></li>
+            <li><a href="{{url_for('roles.controllers.index')}}">Role</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h5 class="page-header">{% block page_title %} Dashboard {% endblock %}</h5>
+        
+           <ol class="breadcrumb">
+               {% block breadcrumb %}
+                <li class="active">Home</li>
+               {% endblock%}
+           </ol>
+            <div class="row">
+                <div class="col-lg-12">
+                    {% block top_content %} {% endblock %}
+                </div>
+            </div>
+         <div class="well">
+                {% block content %} {% endblock %}
+         </div>
+
+        </div>
+      </div>
+    </div>
+<div class="loading" style="display:none;">Loading&#8230;</div>
+</body>
+</html>

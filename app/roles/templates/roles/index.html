@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %} {{'Manage Role(s)'|site_title}} {% endblock %}
+
+{% block page_title %} Manage Role {% endblock %}
+
+{% block extra_js %}
+    <script src="{{url_for('static', filename='js/typeahead.bundle.min.js')}}"></script>
+    <script>
+        $(document).ready(function(e){ 
+            $('table').stupidtable();
+            
+            $('[name=select_all]').click(function(e){
+                  if(this.checked == true){
+                      $('[type=checkbox]').prop('checked', true);
+                      $('#add_to_role_btn').prop('disabled', false);
+                  }else{
+                      $('[type=checkbox]').prop('checked', false);
+                      $('#add_to_role_btn').prop('disabled', true);
+                  }
+            });
+            
+            $('[name=function]').change(function(e){
+                  if(this.checked == false){
+                       $('[name=select_all]').prop('checked', false);
+                      $('#add_to_role_btn').prop('disabled', true);
+                  }else{
+                      $('#add_to_role_btn').prop('disabled', false);
+                  }
+                
+                  if ($('[name=function]:checked').length == $('[name=function]').length ){ 
+                        $('[name=select_all]').prop('checked', true);
+                        $('#add_to_role_btn').prop('disabled', false);
+                  }
+            });
+            
+            $('#add_to_role_btn').click(function(e){
+                var functions = JSON.stringify($('[name=function]:checked').map(function(){ return this.value}).get());
+                var role_id = $('[name=search]').val();
+                
+                $.ajax({
+                    url: '/roles/add_functions',
+                    type: 'POST',
+                    data: {functions: functions, role_id: role_id}
+                });
+                
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{url_for('dashboard.controllers.index')}}">Home</a></li>
+    <li class="active">Role</li>
+{% endblock%}
+
+{% block top_content %}
+    <span class="create_role_top_content">
+    </span>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12">
+        <div class="panel panel-primary">
+        <div class="panel-heading">Functions<span class="pull-right"></span></div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>
+                                 <button class="btn btn-sm btn-primary" disabled id="add_to_role_btn"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Add to Role</button>
+                            </td>
+                            <td colspan="2">
+                                <form class="form-inline col-lg-12" name="search_form">
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" placeholder="Search for role..." name="search">
+                                      <span class="input-group-btn">
+                                        <button class="btn btn-primary search_btn" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                                      </span>
+                                    </div><!-- /input-group -->
+                                </form>
+                            </td>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" name="select_all" /></th>
+                            <th data-sort="string">Permission name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for function in functions %}
+                        <tr>
+                            <td><input type="checkbox" name="function" value="{{function}}" /></td>
+                            <td>{{function}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+    </div>
+</div>
+{% endblock %}

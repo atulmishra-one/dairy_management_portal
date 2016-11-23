@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+    <head>
+            <title>{{'Login into your account '|site_title}}</title>
+            {% assets "css_all" %}
+                <link rel="stylesheet" href="{{ ASSET_URL }}" />
+            {% endassets %}
+            
+            <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" />
+            <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>
+             <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'  type='text/css'>
+            <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'  type='text/css'>
+        
+            <style>
+                body{
+                    background: #2E6DA4;
+                    font-family: 'Open Sans', 'Roboto', 'Ubuntu', serif;
+                }
+                h2{
+                    font-family: 'Ubuntu', serif;
+                }
+                .well{
+                    background-image: -webkit-linear-gradient(top,#F9F8FF 0,#F4F5FF 100%);
+                }
+                .page-header {
+                    padding-bottom: 9px;
+                    margin: 0px 0 20px;
+                    border-bottom: 1px solid #eee;
+                }
+            </style>
+        
+            {% assets "js_all" %}
+                <script type="application/javascript" src="{{ ASSET_URL }}"></script>
+            {% endassets %}
+            
+    </head>
+<body>
+    <div class="container">
+        <div class="well col-lg-offset-1 col-lg-10">
+            <div class="row">
+                <div class="col-sm-6 col-lg-6 col-xs-6">
+                    <div class="page-header">
+                        <strong>Dairy Manager</strong>
+                    </div>
+                    <img src="/static/images/logo.png" class="img-responsive img-rounded" />
+                    <br>
+                    <ul class="list-inline">
+                        <li><span class="glyphicon glyphicon-phone-alt"></span>&nbsp;&nbsp;
+                            <a href="tel://+919654586130">+91 9654586130</a></li> |
+                        <li><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;
+                            <a href="mailto://support@mobiginotech.com">support@mobiginotech.com</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-lg-6 col-xs-6">
+                    <div class="page-header">
+                        <strong>Sign in</strong>
+                    </div>
+                    
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {% for message in messages %}
+                                {% for msg in message %}
+                                    <strong>{{ msg|title }}</strong>
+                                    <ul>
+                                        {% for m in message[msg] %}
+                                            <li>{{m}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endfor %}
+                        {% endfor %}
+                        </div>
+                      {% endif %}
+                    {% endwith %}
+                    
+                    <form class="form-horizontal" method="post">
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Username</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="username" class="form-control" placeholder="Enter your username." autofocus autocomplete="off" required maxlength="64">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Password</label>
+                            <div class="col-sm-8">
+                                <input type="password" name="password" class="form-control" placeholder="Enter your password." required autocomplete="off">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8">
+                              <div class="checkbox">
+                                <label>
+                                  <input type="checkbox" name="remember_me"> Remember me
+                                </label>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;Login</button>
+                                &nbsp;
+                            <a href="">Forgot Password</a>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+            <div class="col-lg-12">
+                <footer>
+                     <p class="pull-left">
+                        <small class="text text-muted">Copyright &copy; 2016 - 2020. All rights reserved !</small>
+                     </p>
+                    <p class="pull-right">
+                        <a href="http://www.mobiginotech.com" target="_blank">Powered by Mobigino Technology</a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+        </div><!-- close well !-->
+        
+        
+        
+    </div>
+</body>
+</html>
