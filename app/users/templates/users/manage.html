@@ -36,7 +36,7 @@
                             'No items found',
                         ].join('\n'),
                        suggestion: function(data){
-                           return '<p>'+data.username+' <span class="badge pull-right">'+data.email+'</span></p>'
+                           return '<div class=""><span>'+data.username+'</span><span class="badge pull-right">'+data.email+'</span></div>'
                        },
                   }
               }).on('typeahead:selected', function(e, data){

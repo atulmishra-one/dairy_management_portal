@@ -18,5 +18,5 @@ class BaseConfig(object):
     MAIL_PORT = 465
     MAIL_USE_SSL = True
     #MAIL_USE_TLS = False
-    MAIL_USERNAME = 'atulmishra.one@gmail.com'
-    MAIL_PASSWORD = 'atul123@#'
+    MAIL_USERNAME = ''
+    MAIL_PASSWORD = ''
