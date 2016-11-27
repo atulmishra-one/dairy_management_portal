@@ -21,7 +21,7 @@ from app.services.extension import sqlalchemy as db
 
 @login_manager.user_loader
 def load_user(id):
-    return User.query.get(id)
+    return User.query.filter(User.id==id, User.active==1).first()
 
 
 @default_module.route('/', methods=['GET', 'POST', ])
@@ -34,7 +34,7 @@ def index():
     if request.method == 'POST':
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data, password=form.password.data).first()
-            if user:
+            if user and user.active:
                 user.authenticated = True
                 db.session.add(user)
                 db.session.commit()
