@@ -1,0 +1,40 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="add_role_modal">
+  <div class="modal-dialog" role="document">
+  <form method="post" action="{{url_for('roles.controllers.add')}}" name="add_role_form">
+      {{form.csrf_token}}
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add New Role</h4>
+      </div>
+      <div class="modal-body">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Role name.." required name="name">
+            </div>
+            <div class="table-responsive" style="height: 300px; overflow-y:scroll; ">
+               <table class="table table-bordered" id="func_table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" name="select_all"></th>
+                            <th data-sort="string">Function</th>
+                        </tr>
+                    </thead>
+                   <tbody>
+                        {% for function in functions %}
+                            <tr>
+                                <td><input type="checkbox" name="function" value="{{function}}"></td>
+                                <td>{{function}}</td>
+                            </tr>
+                        {% endfor %}
+                   </tbody>
+               </table>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary btn-sm" id="import_form_btn">Submit</button>
+      </div>
+    </div><!-- /.modal-content -->
+      </form>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

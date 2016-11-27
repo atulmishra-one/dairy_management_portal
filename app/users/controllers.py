@@ -29,11 +29,13 @@ from .forms import SendEmailForm
 from .tasks import upload_users
 from app.services.extension import task_server
 from app.services.extension import mail
+from app.roles.utils import permission_required
 
 
 @users_module.route('/page/<page>', methods=['GET'])
 @users_module.route('', methods=['GET'])
 @login_required
+@permission_required
 def index(page=0):
     
     page = int(page) or 1
@@ -60,6 +62,7 @@ def index(page=0):
 @users_module.route('/manage/<username>', methods=['GET', 'POST'])
 @users_module.route('/manage', methods=['GET', 'POST'])
 @login_required
+@permission_required
 def manage(username=None):
     roles = Role.query.all()
     form = UserForm(request.form)
@@ -87,6 +90,7 @@ def manage(username=None):
 
 
 @users_module.route('/search', methods=['GET', 'POST'])
+@permission_required
 def search():
     q = request.args.get('q', type=str)
     
@@ -111,6 +115,7 @@ def search():
     
 @users_module.route('/delete', methods=['POST'])
 @login_required
+@permission_required
 def delete():
     if request.method == 'POST':
         username = request.form['username']
@@ -120,10 +125,12 @@ def delete():
             return jsonify(success='User deleted successfully.')
         else:
             return make_response(jsonify(error='An error occurred ! try again later.'), 500)
-    return
+    return ''
+
 
 @users_module.route('/import_users', methods=['GET','POST'])
 @login_required
+@permission_required
 def import_users():
     
     if request.method == 'POST':
@@ -155,6 +162,7 @@ def import_users():
 
 @users_module.route('/export', methods=['GET','POST'])
 @login_required
+@permission_required
 def export():
     users = User.query.filter(User.username != 'admin' ).all()
     column_names = ['initial_name', 'first_name', 'last_name', 'username', 'email', 'password', 'active']
@@ -190,6 +198,7 @@ def generate_password():
 
 @users_module.route('/send_email', methods=['POST'])
 @login_required
+@permission_required
 def send_email():
     form = SendEmailForm(request.form)
     

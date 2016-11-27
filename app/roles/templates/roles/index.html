@@ -12,37 +12,79 @@
             $('[name=select_all]').click(function(e){
                   if(this.checked == true){
                       $('[type=checkbox]').prop('checked', true);
-                      $('#add_to_role_btn').prop('disabled', false);
                   }else{
                       $('[type=checkbox]').prop('checked', false);
-                      $('#add_to_role_btn').prop('disabled', true);
                   }
             });
             
             $('[name=function]').change(function(e){
                   if(this.checked == false){
                        $('[name=select_all]').prop('checked', false);
-                      $('#add_to_role_btn').prop('disabled', true);
-                  }else{
-                      $('#add_to_role_btn').prop('disabled', false);
                   }
                 
                   if ($('[name=function]:checked').length == $('[name=function]').length ){ 
                         $('[name=select_all]').prop('checked', true);
-                        $('#add_to_role_btn').prop('disabled', false);
                   }
             });
             
-            $('#add_to_role_btn').click(function(e){
-                var functions = JSON.stringify($('[name=function]:checked').map(function(){ return this.value}).get());
-                var role_id = $('[name=search]').val();
+            $('[name=add_role_form]').submit(function(e){
                 
+                e.preventDefault();
+                
+                var allowed_funcs = $('[name=function]:checked').map(function(){ return $.trim(this.value)}).get().join(',');
+                
+                var disallowed_funcs = $('[name=function]:not(:checked)').map(function(){ return $.trim(this.value)}).get().join(',');
+                
+                var name = $('[name=name]').val();
+                
+                var csrf_token = $('[name=csrf_token]').val();
+                
+                $('[name=add_role_form]').find('button[type=submit]').prop('disabled', true).text('Please wait ..');
                 $.ajax({
-                    url: '/roles/add_functions',
+                    url: '/roles/add',
                     type: 'POST',
-                    data: {functions: functions, role_id: role_id}
+                    data: {allowed_funcs: allowed_funcs, name: name, disallowed_funcs: disallowed_funcs, csrf_token: csrf_token}
+                }).done(function(response){
+                     toastr.success(response.success);
+                }).fail(function(xhr){
+                    toastr.error(xhr.responseText);
+                }).always(function(){
+                     $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false).text('Submit');
                 });
                 
+            });
+            
+            $('#add_role_modal').on('show.bs.modal', function(e){
+                 var name = e.relatedTarget.dataset.name;
+                 if( typeof name != "undefined"){
+                     $('#add_role_modal').find('.modal-title').text('Manage Role'); 
+                     $('[name=name]').val(name);
+                     $('[name=add_role_form]').find('button[type=submit]').prop('disabled', true);
+                      $.ajax({
+                          url: '/roles/'+name
+                      }).done(function(response){
+                          $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false);
+                           $('[name=function]').prop('checked', false);
+                          $.each( $('[name=function]'), function(){
+                                   var value = $(this).val();
+                                   var element = $(this);
+                                   element.prop('checked', false);
+                                   $.each(response.results[0].allowed_funcs, function(i, row){
+                                            if( $.trim(row) == $.trim(value) ){
+                                                element.prop('checked', true);
+                                            }
+                                   });
+                            });
+                      }).fail(function(){
+                          $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false);
+                          $('[name=function]').prop('checked', false);
+                      }).always(function(){
+                          $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false);
+                      });
+                 }else{
+                     $('#add_role_modal').find('.modal-title').text('Add Role'); 
+                     $('[name=name]').val('');
+                 }
             });
         });
     </script>
@@ -62,38 +104,33 @@
 <div class="row">
     <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12">
         <div class="panel panel-primary">
-        <div class="panel-heading">Functions<span class="pull-right"></span></div>
+        <div class="panel-heading">Roles<span class="pull-right"></span></div>
         <div class="panel-body">
             <div class="table-responsive">
                 <table class="table table-bordered">
+                    <col width="2%">
+                    <col width="1%">
+                    <col width="30%">
                     <thead>
                         <tr>
-                            <td>
-                                 <button class="btn btn-sm btn-primary" disabled id="add_to_role_btn"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Add to Role</button>
-                            </td>
-                            <td colspan="2">
-                                <form class="form-inline col-lg-12" name="search_form">
-                                    <div class="input-group">
-                                      <input type="text" class="form-control" placeholder="Search for role..." name="search">
-                                      <span class="input-group-btn">
-                                        <button class="btn btn-primary search_btn" type="button"><span class="glyphicon glyphicon-search"></span></button>
-                                      </span>
-                                    </div><!-- /input-group -->
-                                </form>
+                            <td colspan="3">
+                                 <button class="btn btn-sm btn-primary pull-right" id="add_to_role_btn" data-toggle="modal" data-target="#add_role_modal"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Add to Role</button>
                             </td>
                         </tr>
                     </thead>
                     <thead>
                         <tr>
+                            <th>&nbsp;</th>
                             <th><input type="checkbox" name="select_all" /></th>
-                            <th data-sort="string">Permission name</th>
+                            <th data-sort="string">Role name</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for function in functions %}
+                        {% for role in roles %}
                         <tr>
-                            <td><input type="checkbox" name="function" value="{{function}}" /></td>
-                            <td>{{function}}</td>
+                            <td><a data-toggle="modal" data-target="#add_role_modal" data-name="{{role.name}}"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <td><input type="checkbox" name="role" value="{{role.name}}" /></td>
+                            <td>{{role.name}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -103,4 +140,6 @@
             </div>
     </div>
 </div>
+
+{% include 'roles/add_role.html' %}
 {% endblock %}
