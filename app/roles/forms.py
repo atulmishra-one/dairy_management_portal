@@ -9,3 +9,6 @@ class AddRoleForm(FlaskForm):
     name = StringField(validators=[DataRequired(), Length(min=2, max=64)])
     allowed_funcs = StringField(validators=[DataRequired()])
     disallowed_funcs = StringField()
+
+class DeleteRoleForm(FlaskForm):
+    name = StringField(validators=[DataRequired(), Length(min=2, max=64)])

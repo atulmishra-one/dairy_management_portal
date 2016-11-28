@@ -5,7 +5,7 @@ from flask_assets import ManageAssets
 from flask_migrate import Migrate, MigrateCommand
 
 from app.services.extension import sqlalchemy as db
-
+from app.services.extension import assets
 from app.application import initialize_app
 
 try:
@@ -25,7 +25,7 @@ migrate = Migrate(current_app, db)
 manager = Manager(current_app)
 manager.add_command("runserver", Server(host='0.0.0.0'))
 manager.add_command("shell", Shell(make_context=_make_context))
-manager.add_command("assets", ManageAssets(current_app))
+manager.add_command("assets", ManageAssets(assets))
 manager.add_command('db', MigrateCommand)
 
 

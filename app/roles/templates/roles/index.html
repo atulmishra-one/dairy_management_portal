@@ -3,6 +3,10 @@
 
 {% block page_title %} Manage Role {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{url_for('.static', filename='scrollbar.css')}}" />
+{% endblock %}
+
 {% block extra_js %}
     <script src="{{url_for('static', filename='js/typeahead.bundle.min.js')}}"></script>
     <script>
@@ -35,6 +39,8 @@
                 
                 var disallowed_funcs = $('[name=function]:not(:checked)').map(function(){ return $.trim(this.value)}).get().join(',');
                 
+                var users = $('[name=username]:checked').map(function(){ return $.trim(this.value)}).get().join(',');
+                
                 var name = $('[name=name]').val();
                 
                 var csrf_token = $('[name=csrf_token]').val();
@@ -43,7 +49,13 @@
                 $.ajax({
                     url: '/roles/add',
                     type: 'POST',
-                    data: {allowed_funcs: allowed_funcs, name: name, disallowed_funcs: disallowed_funcs, csrf_token: csrf_token}
+                    data: {
+                        allowed_funcs: allowed_funcs, 
+                        name: name, 
+                        disallowed_funcs: disallowed_funcs, 
+                        csrf_token: csrf_token,
+                        users: users
+                    }
                 }).done(function(response){
                      toastr.success(response.success);
                 }).fail(function(xhr){
@@ -64,8 +76,11 @@
                           url: '/roles/'+name
                       }).done(function(response){
                           $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false);
-                           $('[name=function]').prop('checked', false);
-                          $.each( $('[name=function]'), function(){
+                          $('[name=function]').prop('checked', false);
+                          
+                          $('[name=username]').prop('checked', false);
+                          try{
+                            $.each( $('[name=function]'), function(){
                                    var value = $(this).val();
                                    var element = $(this);
                                    element.prop('checked', false);
@@ -74,10 +89,27 @@
                                                 element.prop('checked', true);
                                             }
                                    });
-                            });
+                            });   
+                          }catch(e){
+                              console.log(e);
+                          }
+                          
+                          $.each( $('[name=username]'), function(){
+                                   var value = $(this).val();
+                                   var element = $(this);
+                                   element.prop('checked', false);
+                                   $.each(response.users, function(i, row){     
+                                       if( $.trim(row.username) == $.trim(value) ){
+                                                element.prop('checked', true);
+                                            }
+                                   });
+                          });
+                          $('#role_form_delete_btn').prop('disabled', false);
+                          
                       }).fail(function(){
                           $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false);
                           $('[name=function]').prop('checked', false);
+                          $('[name=username]').prop('checked', false);
                       }).always(function(){
                           $('[name=add_role_form]').find('button[type=submit]').prop('disabled', false);
                       });
@@ -85,6 +117,18 @@
                      $('#add_role_modal').find('.modal-title').text('Add Role'); 
                      $('[name=name]').val('');
                  }
+            });
+            
+            $('#role_form_delete_btn').click(function(e){
+                  $.ajax({
+                      url: '/roles/delete',
+                      type: 'POST',
+                      data: $('[name=add_role_form]').serialize()
+                  }).done(function(response){
+                      toastr.success(response.success);
+                  }).fail(function(xhr){
+                      toastr.error(xhr.statusText);
+                  });
             });
         });
     </script>
@@ -105,37 +149,19 @@
     <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12">
         <div class="panel panel-primary">
         <div class="panel-heading">Roles<span class="pull-right"></span></div>
-        <div class="panel-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <col width="2%">
-                    <col width="1%">
-                    <col width="30%">
-                    <thead>
-                        <tr>
-                            <td colspan="3">
-                                 <button class="btn btn-sm btn-primary pull-right" id="add_to_role_btn" data-toggle="modal" data-target="#add_role_modal"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Add to Role</button>
-                            </td>
-                        </tr>
-                    </thead>
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th><input type="checkbox" name="select_all" /></th>
-                            <th data-sort="string">Role name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for role in roles %}
-                        <tr>
-                            <td><a data-toggle="modal" data-target="#add_role_modal" data-name="{{role.name}}"><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                            <td><input type="checkbox" name="role" value="{{role.name}}" /></td>
-                            <td>{{role.name}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="well">
+                <button class="btn btn-sm btn-primary " id="add_to_role_btn" data-toggle="modal" data-target="#add_role_modal"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Add Role</button>
             </div>
+        <div class="panel-body">
+            <ol class="list-group">
+                {% for role in roles %}
+                        <li class="list-group-item">
+                            <a href="#" data-toggle="modal" data-target="#add_role_modal" data-name="{{role.name}}"><span class="glyphicon glyphicon-info-sign"></span>
+                            &nbsp;&nbsp;
+                            {{role.name}} </a>
+                        </li>
+                    {% endfor %}
+            </ol>
         </div>
             </div>
     </div>

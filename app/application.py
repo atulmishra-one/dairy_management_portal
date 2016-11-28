@@ -6,7 +6,7 @@ from importlib import import_module
 import os
 
 from flask import Flask
-from flask_assets import Environment, Bundle
+from flask_assets import Bundle
 
 from app.modules import modules
 from app.services.extension import login_manager
@@ -14,6 +14,7 @@ from app.services.extension import sqlalchemy
 from app.services.extension import migrate
 from app.services.extension import mail
 from app.services.session import RedisSessionInterface
+from app.services.extension import assets
 
 
 def initialize_app(config_object):
@@ -24,10 +25,9 @@ def initialize_app(config_object):
         import_module(module.import_name)
         app.register_blueprint(module)
     
-    assets = Environment(app)
     js = Bundle('js/jquery-3.1.1.min.js', 'js/bootstrap.min.js')
     css = Bundle('css/bootstrap.min.css', 'css/style.css')
-    
+    assets.init_app(app)
     assets.register('js_all', js)
     assets.register('css_all', css)
     

@@ -17,6 +17,8 @@
             <link rel="stylesheet" href="/static/css/typeahead.css" />
             <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
             <link rel="stylesheet" href="/static/css/overlay.css" />
+            {% block extra_css %}
+            {% endblock %}
         
             <style>
                 body{
@@ -69,20 +71,22 @@
                   background-color: #3D78AB;
                   outline: 1px solid slategrey;
                 }
-                
-                body::-webkit-scrollbar {
-                    width: 0.6em;
+                strong.modal-title{
+                    color: #fff;
                 }
-
-                body::-webkit-scrollbar-track {
-                    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                .modal-header{
+                    background: #326FA2 !important;
                 }
-
-                body::-webkit-scrollbar-thumb {
-                  background-color: #3D78AB;
-                  outline: 1px solid slategrey;
+                .modal-body{
+                    background: #F5F5F5;
                 }
-                
+                .nav-tabs>li.active>a{
+                    background-color: #337AB7 !important;
+                    color: #CCC !important;
+                }
+                .tab-content{
+                    background: #FFF;
+                }
             </style>
         
             {% assets "js_all" %}
