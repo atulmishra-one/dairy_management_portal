@@ -1,6 +1,6 @@
 from collections import defaultdict
 from app.services.extension import sqlalchemy as db
-from .role import Role
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -14,7 +14,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True)
     active = db.Column(db.Boolean, default=False)
     authenticated = db.Column(db.Boolean, default=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     
     
     def __str__(self):
@@ -31,23 +31,6 @@ class User(db.Model):
     
     def is_authenticated(self):
         return self.authenticated
-    
-    def create(self, context):
-        db.session.add_all([
-                User(
-                    initial_name=row.get('initial_name', ''), 
-                    first_name=row.get('first_name', ''),
-                    last_name=row.get('last_name', ''),
-                    username=row['username'],
-                    password=row['password'],
-                    email=row['email'],
-                    active=row.get('active', 0),
-                    role_id=row.get('role_id', 2)
-                ) 
-                for row in context
-            ])
-        db.session.commit()
-        return 
     
     def create_or_update(self, context):
         
@@ -71,7 +54,7 @@ class User(db.Model):
                 user.last_name = ec.get('last_name', '')
                 user.password = ec.get('password', '')
                 user.active = ec.get('active', 0)
-                user.role_id= ec.get('role_id', 2)
+                user.department_id= ec.get('department_id', 1)
                 db.session.add(user)
             db.session.commit()
         if users_that_does_not_exists:
@@ -88,7 +71,7 @@ class User(db.Model):
                     password=row['password'],
                     email=row['email'],
                     active=row.get('active', 0),
-                    role_id=row.get('role_id', 2)
+                    department_id=row.get('department_id', 1)
                 ) 
                 for row in new_context
             ])

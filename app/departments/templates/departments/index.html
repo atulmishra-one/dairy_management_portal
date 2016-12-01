@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %} {{'Manage Department(s)'|site_title}} {% endblock %}
+
+{% block page_title %} Manage Department {% endblock %}
+
+{% block extra_js %}
+    <script>
+        $(document).ready(function(e){
+             //var table = $('#department table');
+             $('#department table tbody tr').on('dblclick', function(e){
+                   name = e.currentTarget.children[0].innerHTML;
+                   code = e.currentTarget.children[1].innerHTML;
+                   description = e.currentTarget.children[2].innerHTML;
+                 
+                   $('a[href="#create"]').click();
+                   $('[name=department_name]').val(name);
+                   $('[name=department_code]').val(code);
+                   $('[name=department_description]').val(description);
+             });
+            
+             function reload(){
+                 window.location.href = window.location.href;
+             }
+            
+             $('[name=create_department_form]').submit(function(e){
+                  e.preventDefault();
+                  $('.loading').hide().show();
+                  $.ajax({
+                      url: '/departments/create',
+                      type: 'POST',
+                      data: $('[name=create_department_form]').serialize()
+                  }).done(function(response){
+                       $('.loading').hide();
+                       toastr.success(response.success);
+                       setTimeout(reload, 2000);
+                  }).fail(function(xhr){
+                      $('.loading').hide();
+                      if(xhr.responeJSON.hasOwnProperty('error')){
+                          toastr.error(xhr.responeJSON.error);
+                      }else{
+                           
+                      }
+                  });
+             });
+        });
+    </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{url_for('dashboard.controllers.index')}}">Home</a></li>
+    <li class="active">Manage</li>
+{% endblock%}
+
+{% block top_content %}
+    <span class="create_department_top_content">
+    </span>
+{% endblock%}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Department<span class="pull-right"></span></div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" ><a href="#department" aria-controls="department" role="tab" data-toggle="tab">Departments</a></li>
+                    <li role="presentation" class="active"><a href="#create" aria-controls="create" role="tab" data-toggle="tab">Create</a></li>
+                    <li role="presentation">
+                        <a href="#roles" aria-controls="roles" role="tab" data-toggle="tab">Roles</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane" id="department">
+                         <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Department Code</th>
+                                    <th>Department Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for department in departments %}
+                                    <tr>
+                                        <td>{{department.department_name}}</td>
+                                        <td>{{department.department_code}}</td>
+                                        <td>{{department.department_description}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                         </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane active" id="create">
+                        {% include 'departments/create.html' %}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="roles">
+                        {% include 'departments/roles.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+

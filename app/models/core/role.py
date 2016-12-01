@@ -1,10 +1,12 @@
 from app.services.extension import sqlalchemy as db
+from app.departments.models.departments import departments
 
 class Role(db.Model):
     __tablename__ = 'role'
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True)
+    departments = db.relationship('Department', secondary=departments, backref=db.backref('roles', lazy='dynamic'))
     allowed_funcs = db.Column(db.Text)
     disallowed_funcs = db.Column(db.Text)
     

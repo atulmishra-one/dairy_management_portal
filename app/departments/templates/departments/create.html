@@ -1,0 +1,18 @@
+<br><br>
+<form method="post" action="{{url_for('departments.controllers.create')}}" name="create_department_form">
+    {{form.csrf_token}}
+    <div class="form-group">
+        <label>Department name </label>
+        <input type="text" name="department_name" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Department Code </label>
+        <input type="text" name="department_code" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Description </label>
+        <textarea class="form-control" name="department_description"></textarea>
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+    <button type="reset" class="btn btn-sm btn-danger">Reset</button>
+</form>
