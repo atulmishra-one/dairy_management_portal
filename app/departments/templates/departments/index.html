@@ -6,7 +6,6 @@
 {% block extra_js %}
     <script>
         $(document).ready(function(e){
-             //var table = $('#department table');
              $('#department table tbody tr').on('dblclick', function(e){
                    name = e.currentTarget.children[0].innerHTML;
                    code = e.currentTarget.children[1].innerHTML;

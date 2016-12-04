@@ -1,6 +1,7 @@
 from app.services.extension import sqlalchemy as db
 from app.departments.models.departments import departments
 
+
 class Role(db.Model):
     __tablename__ = 'role'
     

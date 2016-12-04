@@ -11,18 +11,20 @@ from app.models.core.role import Role
 from app.models.core.user import User
 from app.services.extension import sqlalchemy as db
 
-from .utils import user_functions
+from .utils import app_functions
 from .forms import AddRoleForm
 from .forms import DeleteRoleForm
 from .utils import permission_required
 
 
 @roles_module.route('')
-@roles_module.route('/<name>')
 @login_required
 @permission_required
 def index(name=None):
-    functions = user_functions()
+    """ Manage Roles
+    """
+    
+    functions = app_functions()
     roles = Role.query.all()
     users = User.query.all()
     
@@ -50,6 +52,8 @@ def index(name=None):
 @login_required
 @permission_required
 def add():
+    """ Create New Role
+    """
     form = AddRoleForm(request.form)
     
     if form.validate_on_submit():
@@ -74,6 +78,8 @@ def add():
 @login_required
 @permission_required
 def delete():
+    """ Removes Role
+    """
     form = DeleteRoleForm(request.form)
     
     if form.validate_on_submit():
