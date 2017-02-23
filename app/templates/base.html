@@ -175,10 +175,14 @@
             <li><a href="">Manage Cash Payments</a></li>
             <li><a href="">Manage Online Payments</a></li>
           </ul>
+         <h5>Department Management</h5>
+          <ul class="nav nav-sidebar">
+            <li><a href="{{url_for('departments.controllers.index')}}">Manage</a></li>
+          </ul>
          <h5>User Management</h5>
           <ul class="nav nav-sidebar">
             <li><a href="{{url_for('users.controllers.index')}}">Users</a></li>
-            <li><a href="{{url_for('users.controllers.manage')}}">Manage</a></li>
+            <li><a href="{{url_for('users.controllers.index')}}">Manage</a></li>
             <li><a href="{{url_for('roles.controllers.index')}}">Role</a></li>
           </ul>
         </div>

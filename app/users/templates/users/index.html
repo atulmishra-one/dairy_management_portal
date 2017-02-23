@@ -56,7 +56,7 @@
             });
             
             $('#search_btn').click(function(e){
-                 window.location.href = "{{url_for('users.controllers.manage')}}/"+$('[name=search]').val();
+                 window.location.href = "{{url_for('users.controllers.index')}}/"+$('[name=search]').val();
             });
             
         });
@@ -81,7 +81,7 @@
                             <div class="col-lg-3 col-xs-3 col-md-3 col-sm-3">
                                  <button class="btn btn-sm btn-primary" id="print_btn"><span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;Print</button>
                             &nbsp;&nbsp;
-                            <a class="btn btn-sm btn-primary" href="{{url_for('users.controllers.export')}}"><span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Export</a>
+                            <a class="btn btn-sm btn-primary" href="{{url_for('users.controllers.index')}}"><span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Export</a>
                             </div>
                             <div class="col-lg-6 col-xs-6 col-md-6 col-sm-6">
                             
@@ -126,7 +126,7 @@
                                   {% for user in users.items %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-sm" href="{{url_for('users.controllers.manage', username=user.username)}}"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                            <a class="btn btn-sm" href="{{url_for('users.controllers.index', username=user.username)}}"><span class="glyphicon glyphicon-info-sign"></span></a>
                                         </td>
                                         <td>{{user.initial_name|title}}&nbsp;{{user.first_name|title}}&nbsp;{{user.last_name|title}}</td>
                                         <td>{{user.username}}</td>

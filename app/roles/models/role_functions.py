@@ -1,4 +1,4 @@
-from app.services.extension import sqlalchemy as db
+from app.services.extension import db
 
 
 class RoleFunctions(db.Model):

@@ -1,4 +1,5 @@
-from app.services.extension import sqlalchemy as db
+from app.services.extension import db
+
 
 class Role(db.Model):
     __tablename__ = 'role'
@@ -14,7 +15,7 @@ class Role(db.Model):
     @staticmethod
     def create_or_update(name, allowed_funcs, disallowed_funcs):
         try:
-            role_exists = Role.query.filter(Role.name==name).first()
+            role_exists = Role.query.filter(Role.name == name).first()
             if role_exists:
                 role_exists.name = name
                 role_exists.allowed_funcs = allowed_funcs

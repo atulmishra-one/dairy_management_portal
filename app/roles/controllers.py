@@ -7,11 +7,11 @@ from flask import request
 from flask_login import login_required
 
 from app.modules import roles_module
-from app.models.core.role import Role
-from app.models.core.user import User
-from app.services.extension import sqlalchemy as db
+from app.roles.models.role import Role
+from app.users.models.user import User
+from app.services.extension import db
 
-from .utils import user_functions
+from .utils import application_functions
 from .forms import AddRoleForm
 from .forms import DeleteRoleForm
 from .utils import permission_required
@@ -22,7 +22,7 @@ from .utils import permission_required
 @login_required
 @permission_required
 def index(name=None):
-    functions = user_functions()
+    functions = application_functions()
     roles = Role.query.all()
     users = User.query.all()
     
@@ -30,13 +30,14 @@ def index(name=None):
     
     if name:
         try:
-            roles = Role.query.filter(Role.name==name).all()
-            roles = [{'allowed_funcs': role.allowed_funcs.split(','), 'disallowed_funcs': role.allowed_funcs.split(',')} for role in roles]
+            roles = Role.query.filter(Role.name == name).all()
+            roles = [{'allowed_funcs': role.allowed_funcs.split(','), 'disallowed_funcs': role.allowed_funcs.split(',')}
+                     for role in roles]
         except AttributeError:
             roles = []
         
         try:
-            users = User.query.join(Role).add_columns(User.username).filter(Role.name==name).all()
+            users = User.query.join(Role).add_columns(User.username).filter(Role.name == name).all()
             users = [{'username': user.username} for user in users]
         except AttributeError:
             users = []

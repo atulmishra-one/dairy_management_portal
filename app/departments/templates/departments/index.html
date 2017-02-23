@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %} {{'Departments'|site_title}} {% endblock %}
+
+{% block page_title %} Departments {% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{url_for('dashboard.controllers.index')}}">Home</a></li>
+    <li class="active">Departments</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-xs-12 col-md-12 col-sm-12">
+        <div class="panel panel-primary">
+        <div class="panel-heading">Departments<span class="pull-right"></span></div>
+            <div class="well">
+                <button class="btn btn-sm btn-primary " data-toggle="modal" data-target="#add_department_modal">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Add Department</button>
+            </div>
+        <div class="panel-body">
+            <ol class="list-group">
+                {% for department in departments %}
+                        <li class="list-group-item">
+                            <a href="#" data-toggle="modal" data-target="#add_department_modal"
+                               data-name="{{department.name}}"><span class="glyphicon glyphicon-info-sign"></span>
+                                &nbsp;&nbsp;
+                            {{department.name}} </a>
+                        </li>
+                {% endfor %}
+            </ol>
+        </div>
+            </div>
+    </div>
+</div>
+{% include 'departments/add.html' %}
+{% endblock %}
+
+{% block extra_js %}
+     <script>
+         $(document).ready(function(e){
+               $('[name=add_department_form]').submit(function(e){
+                    e.preventDefault();
+                    $('[name=add_department_form]').find('button[type=submit]').prop('disabled', true).text('Please wait ..');
+                    $.ajax({
+                        url: '/departments/add',
+                        type: 'POST',
+                        data: $('[name=add_department_form]').serialize()
+                    }).done(function(response){
+                        toastr.success(response.success);
+                    });
+               });
+         });
+     </script>
+{% endblock %}
+
+
+
+
+

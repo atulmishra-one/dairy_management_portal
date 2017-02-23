@@ -114,7 +114,11 @@
             <div class="col-lg-12">
                 <footer>
                      <p class="pull-left">
-                        <small class="text text-muted">Copyright &copy; 2016 - 2020. All rights reserved !</small>
+                        <small class="text text-muted">
+                            {% autoescape off %}
+                                {{copyright}}
+                            {% endautoescape %}
+                        </small>
                      </p>
                     <p class="pull-right">
                         <a href="http://www.mobiginotech.com" target="_blank">Powered by Mobigino Technology</a>

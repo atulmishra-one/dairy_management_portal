@@ -1,6 +1,5 @@
 """
 This is default module controller
-It define default routes
 """
 
 from flask import render_template
@@ -15,13 +14,13 @@ from flask_login import current_user
 from app.modules import default_module
 from app.default.forms import LoginForm
 from app.services.extension import login_manager
-from app.models.core.user import User
-from app.services.extension import sqlalchemy as db
+from app.services.extension import db
+from app.users.models.user import User
 
 
 @login_manager.user_loader
 def load_user(id):
-    return User.query.filter(User.id==id, User.active==1).first()
+    return User.query.filter(User.id == id, User.active == 1).first()
 
 
 @default_module.route('/', methods=['GET', 'POST', ])
@@ -33,7 +32,10 @@ def index():
     
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data, password=form.password.data).first()
+            user = User.query.filter_by(
+                username=form.username.data,
+                password=form.password.data
+            ).first()
             if user and user.active:
                 user.authenticated = True
                 db.session.add(user)
@@ -59,3 +61,4 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for('default.controllers.index'))
+

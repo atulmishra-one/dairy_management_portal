@@ -1,7 +1,7 @@
 import xlrd
 
-from app.services.extension import task_server, sqlalchemy as db
-from app.models.core.user import User
+from app.services.extension import task_server, db
+from app.users.models.user import User
 from app.application import initialize_app
 
 try:
