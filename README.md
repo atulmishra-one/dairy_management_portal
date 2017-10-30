@@ -1,3 +1,3 @@
-# Dairy Manager
+# Dairy Management Portal
 
-Dairy Manager is a complete solution for Dairy Industry Infrastructure & Resource Management System.
+Dairy Management Portal is a complete solution for Dairy Industry Infrastructure & Resource Management System.
